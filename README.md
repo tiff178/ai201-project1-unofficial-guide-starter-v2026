@@ -2,21 +2,6 @@
 
 Tiffany Truong | Corpus: `city_guides`
 
-> **This file is your submission.** Fill it in as you go — most sections get
-> written during the milestone that produces them, not at the end.
->
-> How the starter works, and every command you'll need, is in `RUNNING.md`.
-> Leave that file alone.
->
-> **Paste everything as text.** No screenshots, no video. A typed table gets
-> full credit; a picture of the same table gets none.
->
-> Delete these instruction blocks as you replace them. The `<!-- -->` comments
-> are notes to you and don't show up when the page renders — you can leave them
-> or remove them.
-
----
-
 # Unit 1
 
 ## What This Does
@@ -32,7 +17,7 @@ To begin asking questions: `python app.py ask "..."`
 **Chunk size:** 500
 **Overlap:** 100
 
-Each document in the `city_guides` corpora is organized into labeled markdown sections (`## Getting there`, `## Getting around`, `# Eat and drink`, etc.). Instead of chunking by character counts, I decided to split the documents by section headings (`##`). This approach keeps entire travel guide recommendations intact within a single chunk, rather than chunks ending halfway. 
+Each document in the `city_guides` corpora is organized into labeled markdown sections (`## Getting there`, `## Getting around`, `## Eat and drink`, etc.). Instead of chunking by character counts, I decided to split the documents by section headings (`##`). This approach keeps entire travel guide recommendations intact within a single chunk, rather than chunks ending halfway. 
 
 The starter chunk turns `city_guides` into 51 chunks from 14 documents (800-character window), slicing straight through the labeled sections. The starter approach frequently sliced paragraphs mid-sentence and cut section headers halfway through. Since these travel guides cover nine different towns with similar sections (`## Getting there,` `## Getting around`, etc.), a chunk that starts mid-section would not know which specific town it belongs to. To resolve this, I implemented a custom `split_documents` function in `chunker.py` that detects section headers (`##`) and groups related paragraphs together while prepending the parent document title and section label `<Guide Title - Section Heading>` to each chunk. 
 
