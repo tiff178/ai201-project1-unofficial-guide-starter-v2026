@@ -19,12 +19,9 @@ pipeline earns credit; *"80% seemed reasonable"* does not.
 
 ## 1. Retrieved chunks contain the answer
 
-For at least 4 of my 5 test questions, the retrieved chunks include one that
-contains the answer.
+For at least 4 of my 5 test questions, the retrieved chunks include one that contains the answer.
 
-**Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
+**Why this target:** Four of my five test questions have their answer located within a single, labeled section of a guide document, making them straightforward to retrieve. The fifth test question, "Which places in the region are largely closed in winter?," spans multiple guide documents with several potential answers, making it harder to capture. 
 
 ---
 
@@ -32,66 +29,31 @@ contains the answer.
 
 Every answer the system produces names at least one source document.
 
-**Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
+**Why this target:** Every document in the city_guides corpus represents either a specific town guide or topic guide (accessibility, eating, transportation, seasons, walking). As source document filenames are attached directly to each retrieved chunk passed into the model, this target is achievable, though it could fail if the model fails to parse metadata. 
 
 ---
 
 ## 3. The relevance gate stops out-of-corpus questions
 
-When I ask a question my documents clearly don't cover, the relevance gate
-stops it and the system returns "I don't have enough information about that" —
-in at least 4 of 5 tries.
+When I ask a question my documents clearly don't cover, the relevance gate stops it and the system returns "I don't have enough information about that" — in at least 4 of 5 tries.
 
-<!-- The five questions are the ones in `OUT_OF_SCOPE` at the bottom of
-     `questions.py`, and `run_eval.py` puts them through the gate and writes
-     what happened into your run log. Swap them for your own if you'd rather —
-     just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
-
-**Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
+**Why this target:** Each document covers specific locations and travel details (e.g. getting there, getting around, what to see, etc.), so completely unrelated topics produce distinctly higher distance scores. This target ensures the distance cutoff catches out-of-scope questions while allowing flexibility for edge cases that happen to use similar keywords. 
 
 ---
 
-## 4. Something about your chunks
+## 4. Retrieved chunks are detailed enough to provide context 
 
-<!-- YOU WRITE THIS ONE.
+For at least 3 of my 5 test questions, the retrieved chunks are at least 250 characters long. 
 
-     How would you know if your chunks were the right size? Name something
-     countable or observable.
-
-     Examples of the right shape — don't copy these, they should come from
-     what you actually saw in Milestone 3:
-       - "At least 4 of 5 sampled chunks read as a complete thought, with no
-          sentence cut in half at either end."
-       - "No chunk is shorter than 200 characters, since anything below that
-          in my corpus turned out to be a heading with no content under it." -->
-
-
-
-**Why this target:**
-
-
+**Why this target:** The city_guides corpus includes descriptive details on sights, dining, transportation, etc. Retrieved chunks under 250 characters are either fragmented headings or isolated text snippets that lack enough surrounding detail to answer a question. Setting a 250 character minimum ensures that each chunk yields complete, informative context while leaving room for naturally shorter summary chunks. 
 
 ---
 
-## 5. Your choice
+## 5. Answers remain concise 
 
-<!-- YOU WRITE THIS ONE TOO.
+For at least 4 of my 5 test questions, the answer the system produces is four sentences or fewer. 
 
-     Pick something you actually care about getting right. It could be about
-     speed, about refusals, about a particular kind of question your corpus
-     handles badly, about source attribution being correct rather than merely
-     present — anything, as long as it names a number or an observable
-     outcome. -->
-
-
-
-**Why this target:**
-
-
+**Why this target:** Users searching city guides need fast, direct answers rather than verbose summaries. Retrieved chunks already contain focused details from the documents, therefore keeping responses to four sentences or fewer ensures answers remain concise while leaving room for questions that list several locations. 
 
 ---
 
