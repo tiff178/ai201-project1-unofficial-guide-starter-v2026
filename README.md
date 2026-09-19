@@ -38,7 +38,7 @@ The starter chunk turns `city_guides` into 51 chunks from 14 documents (800-char
 
 I set a target chunk size of 500 characters with a 100-character overlap. The 500-character chunk size aligns with the typical length of a single travel recommendation paragraph, keeping each chunk focused on a specific tip rather than clumping multiple topics together. The 100-character overlap acts as a safety buffer when a section spans across paragraph breaks, ensuring key details like specific restaurant names, transit lines, or seasonal warnings; don't lose their context across chunk boundaries.
 
-Starter Chunk: 51 chunks, 650 characters on average (shortest 24, longest 800) 
+Starter Chunk: 51 chunks, 650 characters on average (shortest 24, longest 800) vs
 Custom Chunk: **98 chunks, 307 characters on average (shortest 153, longest 554)**
 
 ## Sample Chunks
