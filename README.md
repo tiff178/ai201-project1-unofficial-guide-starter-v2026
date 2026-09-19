@@ -124,6 +124,8 @@ My relevance cutoff is 0.66 because it sits directly in the middle between my in
 
 **2.** I pasted both sets of distances into Claude and asked "*Here are the best distances for five questions my documents cover, and five they don't. Where would you put the cutoff, and what would I get wrong at that number?*" It suggested a relevance cutoff between 0.6-0.65 with an explanation of why it made that suggestion. I decided to set my relevance cutoff as 0.66 as it would be in between the gap of my in-scope and out-of-scope questions, which is a reasonable choice near the range Claude suggested. 
 
+---
+
 # Unit 2
 
 <!-- These sections get ADDED to what's already above. Don't delete or rewrite
