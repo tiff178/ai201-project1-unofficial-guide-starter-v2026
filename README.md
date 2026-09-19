@@ -34,7 +34,7 @@ Tiffany Truong | Corpus: city_guides
 
 Each document in the `city_guides` corpora is organized into labeled markdown sections (`## Getting there`, `## Getting around`, `# Eat and drink`, etc.). Instead of chunking by character counts, I decided to split the documents by section headings (`##`). This approach keeps entire travel guide recommendations intact within a single chunk, rather than chunks ending halfway. 
 
-The starter chunk turns `city_guides` into 51 chunks from 14 documents (800-character window), slicing straight through the labeled sections. The starter approach frequently sliced paragraphs mid-sentence and cut section headers halfway through. Since these travel guides cover nine different towns with similar sections (`## Getting there,` `## Getting around`, etc.), a chunk that starts mid-section would not know which specific town it belongs to. To resolve this, I implemented a custom `split_documents` function in `chunker.py` that detects section headers (`##`) and groups related paragraphs together while prepending the parent document title and section label `Guide Title - Section Heading` to each chunk. 
+The starter chunk turns `city_guides` into 51 chunks from 14 documents (800-character window), slicing straight through the labeled sections. The starter approach frequently sliced paragraphs mid-sentence and cut section headers halfway through. Since these travel guides cover nine different towns with similar sections (`## Getting there,` `## Getting around`, etc.), a chunk that starts mid-section would not know which specific town it belongs to. To resolve this, I implemented a custom `split_documents` function in `chunker.py` that detects section headers (`##`) and groups related paragraphs together while prepending the parent document title and section label `<Guide Title - Section Heading>` to each chunk. 
 
 I set a target chunk size of 500 characters with a 100-character overlap. The 500-character chunk size aligns with the typical length of a single travel recommendation paragraph, keeping each chunk focused on a specific tip rather than clumping multiple topics together. The 100-character overlap acts as a safety buffer when a section spans across paragraph breaks, ensuring key details like specific restaurant names, transit lines, or seasonal warnings; don't lose their context across chunk boundaries.
 
@@ -89,52 +89,40 @@ a minor injuries unit locally with limited hours.
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
-**Question:**
+**Question:** What time should I arrive at if I go to Halden Bay in August?
 
 **Answer:**
 
 ```
+(best distance 0.243, cutoff 0.66)
+
+If you are going to Halden Bay in August, you should arrive before 10am or plan to use the overflow lot (guide_seasons.md).
+
+Sources retrieved: guide_halden_bay.md, guide_seasons.md
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.66
 
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+My relevance cutoff is 0.66 because it sits directly in the middle between my in-scope and out-of-scope questions. Four out of my five test questions land between 0.24 and 0.35, with the fifth one more far out (0.524). At 0.66, the cutoff provides a safe, balanced boundary in both directions. Valid questions pass through to retrieval while unrelated queries are safely intercepted by the gate. Setting the cutoff any higher would risk letting out-of-scope questions slip through and cause hallucinations, whereas setting it lower would cause false rejections on valid in-scope questions like "Which places in the region are largely closed in winter?" (0.524).
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What time should I arrive at if I go to Halden Bay in August? | yes | 0.243 |
+| What is there to eat and drink at Halden Bay? | yes | 0.313 |
+| How do I get to Pellew Sands? | yes | 0.346 |
+| How long does it take to drive to Kestrelford? | yes | 0.354 |
+| Which places in the region are largely closed in winter? | yes | 0.524 |
+| What is the capital of Mongolia? | no | 0.808 |
+| What is the recommended dosage of ibuprofen for a headache? | no | 0.835 |
+| How do I write a for loop in Rust? | no | 0.859 |
+| How do I change the oil in a diesel engine? | no | 0.881 |
+| Who won the 1994 World Cup? | no | 0.982 |
 
 ## How I Used AI
-
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
-
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
 
 **1.**
 
 **2.**
-
-<!-- ── Stretch features ─────────────────────────────────────────────────────
-     Doing one? Say so here BEFORE you start. A feature this README never
-     claims earns nothing.
-     ───────────────────────────────────────────────────────────────────────── -->
-
----
 
 # Unit 2
 
