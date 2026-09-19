@@ -29,53 +29,62 @@ Tiffany Truong | Corpus: city_guides
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** 500
+**Overlap:** 100
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+Each document in the `city_guides` corpora is organized into labeled markdown sections (`## Getting there`, `## Getting around`, `# Eat and drink`, etc.). Instead of chunking by character counts, I decided to split the documents by section headings (`##`). This approach keeps entire travel guide recommendations intact within a single chunk, rather than chunks ending halfway. 
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
+The starter chunk turns `city_guides` into 51 chunks from 14 documents (800-character window), slicing straight through the labeled sections. The starter approach frequently sliced paragraphs mid-sentence and cut section headers halfway through. Since these travel guides cover nine different towns with similar sections (`## Getting there,` `## Getting around`, etc.), a chunk that starts mid-section would not know which specific town it belongs to. To resolve this, I implemented a custom `split_documents` function in `chunker.py` that detects section headers (`##`) and groups related paragraphs together while prepending the parent document title and section label `Guide Title - Section Heading` to each chunk. 
 
-     Milestone 3. -->
+I set a target chunk size of 500 characters with a 100-character overlap. The 500-character chunk size aligns with the typical length of a single travel recommendation paragraph, keeping each chunk focused on a specific tip rather than clumping multiple topics together. The 100-character overlap acts as a safety buffer when a section spans across paragraph breaks, ensuring key details like specific restaurant names, transit lines, or seasonal warnings; don't lose their context across chunk boundaries.
+
+Starter Chunk: 51 chunks, 650 characters on average (shortest 24, longest 800) 
+Custom Chunk: **98 chunks, 307 characters on average (shortest 153, longest 554)**
 
 ## Sample Chunks
 
-<!-- Five chunks, pasted as text. Label each one and name the file it came from
-     AND the function that produced it — the grader checks your code against
-     what you claim here.
-
-     `python app.py chunks -n 5` prints all three for you. Copy them straight
-     across.
-
-     Milestone 3. -->
-
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: `guide_accessibility.md#0` — produced by: `chunker.py::split_documents`
 
 ```
+Getting around the region with limited mobility
+
+An honest assessment rather than a promotional one. Some of these places are
+difficult and it is better to know in advance.
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: `guide_corry_vale.md#4` — produced by: `chunker.py::split_documents`
 
 ```
+Corry Vale — What to see
+
+The valley itself is the attraction. The footpath network is dense and well marked, and a circuit taking in three of the four villages is about nine miles with 500 metres of ascent. The chapel in the second village is 12th century and always unlocked.
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: `guide_givens_mill.md#1 ` — produced by: `chunker.py::split_documents`
 
 ```
+Givens Mill — Getting there
+
+No station and no bus on Sundays; four buses a day from Brightwater on weekdays, taking 30 minutes. Driving is 20 minutes. The village car park holds about forty cars and is full by 11am on summer Saturdays.
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: `guide_kestrelford.md#4` — produced by: `chunker.py::split_documents`
 
 ```
+Kestrelford — What to see
+
+The market square on a Saturday morning is the main event and has run continuously since the 1400s. The parish church has a 13th-century tower you can climb for £2. The old trackbed walk runs six miles to the next village along an easy gradient and is the best half-day here.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: `guide_pellew_sands.md#7` — produced by: `chunker.py::split_documents`
 
 ```
+Pellew Sands — Practical notes
+
+Cash is still useful at the market and in smaller places, though cards are
+accepted almost everywhere now. Mobile coverage is good in the centre and
+patchy on the outskirts. The nearest full hospital is in Brightwater; there is
+a minor injuries unit locally with limited hours.
 ```
 
 ## Sample Answer

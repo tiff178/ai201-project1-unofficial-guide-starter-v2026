@@ -82,22 +82,79 @@ def fallback_split(
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
-
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
-
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
-
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
+    Split documents into chunks, one chunk per labeled section.
+    <Guide Title - Section Heading> 
     """
-    return fallback_split(documents)
+    chunks = []
+    limit = config.CHUNK_SIZE
+    overlap = config.CHUNK_OVERLAP
+
+    for doc in documents:
+        lines = doc.text.splitlines()
+
+        # extract document title (#)
+        title = ""
+        for line in lines:
+            if line.startswith("# "):
+                title = line[2:].strip()
+                break
+
+        # group text by sections (##)
+        sections = []
+        heading = ""
+        body = []
+
+        for line in lines:
+            if line.startswith("## "):
+                if body:
+                    sections.append((heading, body))
+                heading = line[3:].strip()
+                body = []
+            elif not line.startswith("# "):
+                body.append(line)
+
+        if body:
+            sections.append((heading, body))
+
+        # build chunks per section using chunk_size & overlap limits
+        index = 0
+        for heading, body in sections:
+            paragraphs = [p.strip() for p in "\n".join(body).split("\n\n") if p.strip()]
+            label = " — ".join(x for x in [title, heading] if x)
+
+            current = ""
+            for paragraph in paragraphs:
+                # if adding this paragraph exceeds limit, save current chunk first
+                if current and len(current) + len(paragraph) + 2 > limit:
+                    chunks.append(
+                        Chunk(
+                            text=f"{label}\n\n{current}",
+                            source=doc.source,
+                            index=index,
+                            produced_by="chunker.py::split_documents",
+                        )
+                    )
+                    index += 1
+
+                    # retain last paragraph for overlap if it fits within overlap window
+                    last_paragraph = current.split("\n\n")[-1]
+                    current = last_paragraph if len(last_paragraph) <= overlap else ""
+
+                current = f"{current}\n\n{paragraph}" if current else paragraph
+
+            # save remaining text for this section
+            if current:
+                chunks.append(
+                    Chunk(
+                        text=f"{label}\n\n{current}",
+                        source=doc.source,
+                        index=index,
+                        produced_by="chunker.py::split_documents",
+                    )
+                )
+                index += 1
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:
