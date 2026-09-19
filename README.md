@@ -1,6 +1,6 @@
 # The Unofficial Guide
 
-Tiffany Truong | Corpus: city_guides
+Tiffany Truong | Corpus: `city_guides`
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -21,11 +21,11 @@ Tiffany Truong | Corpus: city_guides
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
+This system uses the `city_guides` corpus to answer questions from fourteen travel guides - nine town guides, plus five guides that cut across all of them (eating, walking, regional transport, seasons, accessibility). You can ask questions to quickly find specific travel recommendations within the guides (e.g. *How do I get to Brightwater?*, *What is there to see in Pellew Sands?*). 
 
-     Milestone 5. -->
+All answers are drawn directly from the documents and name the source files used. If you ask a question that the travel guides do not cover, the system will state that it does not have enough information to answer. 
+
+To begin asking questions: `python app.py ask "..."`
 
 ## Chunking Strategy
 
@@ -120,9 +120,9 @@ My relevance cutoff is 0.66 because it sits directly in the middle between my in
 
 ## How I Used AI
 
-**1.**
+**1.** I pasted my five draft critera into Claude and asked "*For each of these five acceptance criteria for a retrieval system, tell me exactly how you would test each one using only what the sentence says. Don't suggest improvements - just tell me what you'd do.*" It could describe a test for each of them, so there was no changes needed to be made on my critera. 
 
-**2.**
+**2.** I pasted both sets of distances into Claude and asked "*Here are the best distances for five questions my documents cover, and five they don't. Where would you put the cutoff, and what would I get wrong at that number?*" It suggested a relevance cutoff between 0.6-0.65 with an explanation of why it made that suggestion. I decided to set my relevance cutoff as 0.66 as it would be in between the gap of my in-scope and out-of-scope questions, which is a reasonable choice near the range Claude suggested. 
 
 # Unit 2
 
