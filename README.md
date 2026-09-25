@@ -189,23 +189,15 @@ Halden Bay largely closes in winter. This information comes from the documents `
 
 ## Diagnoses
 
-<!-- For each miss: which stage caused it, and how. The stage alone isn't
-     enough — you need the mechanism.
+**In-Scope Question Failed**: How do I get to Pellew Sands?
+**Stage**: Chunking/Retrieval 
 
-     Not a diagnosis: "Question 3 didn't work."
-     A diagnosis:     "Question 3 asks about laundry costs. The answer is in
-                       one sentence that got split across two chunks, so
-                       neither chunk on its own contains it."
+For all three runs on this question, it stated it does not have enough information to answer how to get to Pellew Sands. However, it successfully identified the correct source documents (`guide_accessibility.md` and `guide_pellew_sands.md`). This likely happened because the semantic search retrieved descriptive chunks instead of the specific travel section (## Getting there) or direction details were split across chunk boundaries. The grounding instruction prevents the model from hallucinations, so missing the factual text in the retrieved chunk forced the system to correctly respond that it did not have enough information to answer. 
 
-     The five stages: loading → chunking → embedding → retrieval → generation.
+All 5 criterion met their target threshold. Some targets were set too conservatively, like targeting 4 of 5 for Criterion 1 allowed the system to pass despite consistently failing to answer one of the questions on every run ("How do I get to Pellew Sands?"). Applying stricter acceptance criteria forces the evaluation to surface specific failure modes, such as context retrieval misses, that would otherwise be masked by lower targets. 
 
-     Look for a pattern. If three misses all ask about numbers, that's one
-     problem, not three.
-
-     Missed nothing? Say so, then say honestly whether your targets were set
-     low, and which one you'd tighten and to what.
-
-     Milestone 3. -->
+- Criterion 1 should be changed to *Every retrieved chunk contains the answer.*
+- Criterion 4 should be changed to *For at least 4 of my 5 test questions, the retrieved chunks are at least 250 characters long.* 
 
 ## The Improvement
 
