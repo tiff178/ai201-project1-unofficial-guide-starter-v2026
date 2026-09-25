@@ -113,33 +113,69 @@ My relevance cutoff is 0.66 because it sits directly in the middle between my in
 
 # Unit 2
 
-<!-- These sections get ADDED to what's already above. Don't delete or rewrite
-     unit 1 — the point is that someone can see what you said before you knew
-     how it went. -->
-
 ## Run Log — Before
-
-<!-- Your five criteria, three runs each. `python run_eval.py --label before`
-     runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
-     writes it all into results/ for you. Targets come from criteria.md; the
-     verdict column is your call.
-
-     Criterion 3 is measured in one deterministic pass rather than three, so
-     the same number goes in all three run columns. That's correct, not lazy.
-
-     Milestone 1. -->
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Retrieved chunks are detailed enough to provide context | 3 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 5. Answers remain concise | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+**Criterion 1**: Scored by `scorer.py::retrieval_hit`; checks whether the `expects` phrase appears in any retrieved chunks
+
+Four out of five test questions passed all three runs, meeting the set acceptance critera. 
+
+| Question | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| What is there to eat and drink at Halden Bay? | pass | pass | pass |
+| How do I get to Pellew Sands? | fail | fail | fail |
+| How long does it take to drive to Kestrelford? | pass | pass | pass |
+| What time should I arrive at if I go to Halden Bay in August? | pass | pass | pass |
+| Which places in the region are largely closed in winter? | pass | pass | pass |
+
+**Criterion 2**: Produced by `generate.py::answer_from_chunks`
+
+Each test question for all three runs provides a source file of where it found the answer. 
+
+**Question**: What is there to eat and drink at Halden Bay?
+
+```
+Based on the documents, Halden Bay offers genuinely fresh seafood because the two harbour restaurants buy directly from boats that land in the early morning (*guide_halden_bay.md* and *guide_eating.md*). Additionally, prices on the harbour front are roughly double those on Fell Street, one level up, for comparable food (*guide_halden_bay.md* and *guide_eating.md*). 
+
+Sources: `guide_halden_bay.md` and `guide_eating.md`
+```
+
+**Criterion 3**: Produced by `run_eval.py::check_out_of_scope`
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| What is the capital of Mongolia? | 0.808 | refused |
+| How do I change the oil in a diesel engine? | 0.881 | refused |
+| Who won the 1994 World Cup? | 0.982 | refused |
+| What is the recommended dosage of ibuprofen for a headache? | 0.835 | refused |
+| How do I write a for loop in Rust? | 0.859 | refused |
+
+**Criterion 4**: Scored by `scorer.py::chunk_detailed`; checks whether the retrieved chunks are at least 250 characters long
+
+Four out of five test questions passed all three runs. One of the question fails all three runs, suggesting that the retrieved chunk is most likely less than 250 characters. 
+
+| Question | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| What is there to eat and drink at Halden Bay? | pass | pass | pass |
+| How do I get to Pellew Sands? | fail | fail | fail |
+| How long does it take to drive to Kestrelford? | pass | pass | pass |
+| What time should I arrive at if I go to Halden Bay in August? | pass | pass | pass |
+| Which places in the region are largely closed in winter? | pass | pass | pass |
+
+**Criterion 5**: Manually count the number of sentences retrieved; four sentences or fewer to pass the criteria. All five answers have four sentences or fewer. 
+
+**Question**: Which places in the region are largely closed in winter?
+
+```
+Halden Bay largely closes in winter. This information comes from the documents `guide_seasons.md` and `guide_halden_bay.md`.
+```
 
 ## Verdicts
 
