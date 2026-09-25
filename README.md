@@ -179,22 +179,13 @@ Halden Bay largely closes in winter. This information comes from the documents `
 
 ## Verdicts
 
-<!-- MET or MISSED for each of the five, against the target you wrote last
-     unit — not a new one. Plus a sentence on how you decided. That sentence
-     matters most where it was close.
-
-     If your target said 4 of 5 and your runs came out 4, 3, 4, that's a MISS.
-     The target has to hold, not show up occasionally.
-
-     Milestone 2. -->
-
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunk contains the answer | MET | 4 of 5 across all three runs, meeting the target exactly; One of the test questions ("How do I get to Pellew Sands?") failed on all three runs consistently due to a retrieval miss, but the other 4 questions passed every time. 
+| 2 | Every answer names a source | MET | 5 of 5; All five test questions for each three runs name at least one source file. Even for the question that failed to contain the answer has provided a source file name. |
+| 3 | Gate stops out-of-corpus questions | MET | Exceeded the 4 of 5 target with 5 of 5 refused. The distances for out-of-scope questions ranged from 0.808 to 0.982 against a 0.66 cutoff. |
+| 4 | Retrieved chunks are detailed enough to provide context | MET | Exceeded the 3 of 5 target with 4 of 5 on all three runs. For 4 of 5 test questions, the top retrieved chunk exceeded 250 characters across all three runs. One of the test questions ("How do I get to Pellew Sands?") failed because no relevant chunk was retrieved. |
+| 5 | Answers remain concise | MET | Exceeded the target of 4 of 5 with 5 of 5 on all three runs. All five questions provided a concise answer with four sentences or fewer for each of the three runs. |
 
 ## Diagnoses
 
