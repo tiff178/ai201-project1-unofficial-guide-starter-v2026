@@ -194,6 +194,8 @@ Halden Bay largely closes in winter. This information comes from the documents `
 
 For all three runs on this question, it stated it does not have enough information to answer how to get to Pellew Sands. However, it successfully identified the correct source documents (`guide_accessibility.md` and `guide_pellew_sands.md`). This likely happened because the semantic search retrieved descriptive chunks instead of the specific travel section (## Getting there) or direction details were split across chunk boundaries. The grounding instruction prevents the model from hallucinations, so missing the factual text in the retrieved chunk forced the system to correctly respond that it did not have enough information to answer. 
 
+- Revision: Tested other towns like Kestrelford, Halden Bay, Thornby Wells with the same type of question *How do I get to ...[Town Name]* and it provided an answer with its source file(s). Perhaps adjusting the chunk size/overlap may resolve this.
+
 All 5 criterion met their target threshold. Some targets were set too conservatively, like targeting 4 of 5 for Criterion 1 allowed the system to pass despite consistently failing to answer one of the questions on every run ("How do I get to Pellew Sands?"). Applying stricter acceptance criteria forces the evaluation to surface specific failure modes, such as context retrieval misses, that would otherwise be masked by lower targets. 
 
 - Criterion 1 should be changed to *Every retrieved chunk contains the answer.*
@@ -201,34 +203,34 @@ All 5 criterion met their target threshold. Some targets were set too conservati
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** Adjust Chunking in `config.py` (`CHUNK_SIZE = 500` and `CHUNK_OVERLAP = 300`)
 
-**Why I picked it:**
+**Why I picked it:** Comparative testing showed that this question succeeded for other towns (Kestrelford, Halden Bay, Thornby Wells), however "How do I get to Pellew Sands?" failed to generate an answer. Increasing CHUNK_OVERLAP to 300 characters ensures that larger context blocks remain intact rather than getting split awkwardly across boundaries, keeping the section headers and information text together.
 
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
+**Other Observations & Follow-Up Test**: To test whether the `## Getting There` section of `guide_pellew_sands.md` was indexed and retrievable, I ran a targeted follow-up question on travel duration - *How long does it take to get to Pellew Sands?*:
+
+```
+It takes 70 minutes on the branch line from the regional hub, or 50 minutes driving from Brightwater. 
+
+Source: `guide_pellew_sands.md`
+
+Sources retrieved: guide_accessibility.md, guide_pellew_sands.md
+```
+
+`## Getting There` in `guide_pellew_sands.md` is accurately chunked and retrievable, so the fail test on *How do I get to Pellew Sands?* could be driven by vector similarity ranking distance for that question rather than a chunking issue. 
 
 ### Run Log — After
 
-<!-- Same format, same five criteria, three runs each.
-     `python run_eval.py --label after` -->
-
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Retrieved chunks are detailed enough to provide context | 3 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 5. Answers remain concise | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
 **Did it help?**
-
-<!-- Say plainly whether it did, and how you know. If it made things worse,
-     say that — a change that backfired, honestly reported, earns full credit
-     and is more interesting than one that worked. What matters is that you can
-     tell.
-
-     Milestone 4. -->
+No, it did not resolve the specific issue. While all five criterion met the target thresholds, adjusting CHUNK_OVERLAP alone did not retrieve the answer for *How do I get to Pellew Sands?*. The follow-up test on a slightly different question proved that the content is indexed, so the failure is confirmed to be a retrieval ranking miss. To fix this specific issue, the next improvement should be implementing BM25 Hybrid Search. 
 
 ## What's Still Broken
 
