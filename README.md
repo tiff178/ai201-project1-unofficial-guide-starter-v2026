@@ -109,6 +109,8 @@ My relevance cutoff is 0.66 because it sits directly in the middle between my in
 
 **2.** I pasted both sets of distances into Claude and asked "*Here are the best distances for five questions my documents cover, and five they don't. Where would you put the cutoff, and what would I get wrong at that number?*" It suggested a relevance cutoff between 0.6-0.65 with an explanation of why it made that suggestion. I decided to set my relevance cutoff as 0.66 as it would be in between the gap of my in-scope and out-of-scope questions, which is a reasonable choice near the range Claude suggested. 
 
+**3.** I pasted my issue I was having for the question that failed all three test runs: *How do I get to Pellew Sands?*, explaining the issue and how I did the chunking process for advice on improvements to make sure it passed the case in the next runs. It provided a few suggestions, such as adjusting the chunk size/overlap or top_k. I decided to try adjusting the chunk size/overlap to see if it improved my results. (Unit 2)
+
 ---
 
 # Unit 2
@@ -207,7 +209,7 @@ All 5 criterion met their target threshold. Some targets were set too conservati
 
 **Why I picked it:** Comparative testing showed that this question succeeded for other towns (Kestrelford, Halden Bay, Thornby Wells), however "How do I get to Pellew Sands?" failed to generate an answer. Increasing CHUNK_OVERLAP to 300 characters ensures that larger context blocks remain intact rather than getting split awkwardly across boundaries, keeping the section headers and information text together.
 
-**Other Observations & Follow-Up Test**: To test whether the `## Getting There` section of `guide_pellew_sands.md` was indexed and retrievable, I ran a targeted follow-up question on travel duration - *How long does it take to get to Pellew Sands?*:
+**Other Observations & Follow-Up Test**: To test whether the `## Getting there` section of `guide_pellew_sands.md` was indexed and retrievable, I ran a targeted follow-up question on travel duration - *How long does it take to get to Pellew Sands?*:
 
 ```
 It takes 70 minutes on the branch line from the regional hub, or 50 minutes driving from Brightwater. 
@@ -217,7 +219,7 @@ Source: `guide_pellew_sands.md`
 Sources retrieved: guide_accessibility.md, guide_pellew_sands.md
 ```
 
-`## Getting There` in `guide_pellew_sands.md` is accurately chunked and retrievable, so the fail test on *How do I get to Pellew Sands?* could be driven by vector similarity ranking distance for that question rather than a chunking issue. 
+`## Getting there` in `guide_pellew_sands.md` is accurately chunked and retrievable, so the fail test on *How do I get to Pellew Sands?* could be driven by vector similarity ranking distance for that question rather than a chunking issue. 
 
 ### Run Log — After
 
@@ -234,17 +236,12 @@ No, it did not resolve the specific issue. While all five criterion met the targ
 
 ## What's Still Broken
 
-<!-- For each criterion still missed after your fix: what you'd do about it,
-     and why you stopped where you did.
+**Test Question Still Broken**: *How do I get to Pellew Sands?* still returns that it does not have enough information to provide how to get to Pellew Sands. The section `## Getting there` in `guide_pellew_sands.md` was able to retrive an answer when asked with a different question. Adjusting the CHUNK_OVERLAP did not fix the issue. It would be worth exploring to see if implementing BM25 Hybrid Search would solve this with more time. 
 
-     "I ran out of time" is fine if it's true. Pretending nothing is left is
-     not.
-
-     Milestone 5. -->
+**Question Set Should Be Harder**: Most of the questions were able to retrieve the information easily as it was quite specific, so there wasn't much to diagnose from it and everything seemed to pass the criteria. 
 
 ## What I'd Do Differently
 
-<!-- Knowing what you know now — which of your five criteria would you write
-     differently, and why?
+I would tighten Criterion 1 (Retrieved chunk contains the answer) by setting a strict 5 of 5 target threshold instead of 4 of 5. Allowing a 4 of 5 target enabled query misses, such as the Pellew Sands question, to pass the overall evaluation, which masked edge-case retrieval failures during baseline runs and reduced the urgency of early pipeline interventions.
 
-     Milestone 5. -->
+I would revise Criterion 4 (Retrieved chunks are detailed enough to provide context) by replacing the character length requirement with a different qualitative standard, as I found it hard to really measure this. Instead, I could set a criteria like: *Every retrieved chunk should contain at least two complete context sentences along with its parent section header.* This is easier to measure as I can check if the retrieved chunk has returned the section header along with the context following it. 
